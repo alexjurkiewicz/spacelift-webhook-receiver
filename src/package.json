@@ -1,0 +1,35 @@
+{
+  "name": "spacelift-webhook-receiver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && webpack && cd dist && zip -q0r dist.zip *",
+    "test": "jest"
+  },
+  "author": "Alex Jurkiewicz <alex@jurkiewi.cz>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.77",
+    "@types/jest": "^26.0.23",
+    "@types/js-yaml": "^4.0.1",
+    "@types/node": "^15.12.2",
+    "@types/node-fetch": "^2.5.10",
+    "@types/pino": "^6.3.8",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "eslint": "^7.29.0",
+    "jest": "^27.0.4",
+    "ts-jest": "^27.0.3",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.4",
+    "webpack": "^5.39.1",
+    "webpack-cli": "^4.7.2"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "node-fetch": "^2.6.1",
+    "pino": "^6.11.3"
+  }
+}
