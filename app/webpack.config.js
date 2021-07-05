@@ -1,4 +1,5 @@
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   mode: 'production',
@@ -28,6 +29,7 @@ module.exports = {
   optimization: {
     minimize: false,
   },
+  externalsPresets: { node: true },
   // Don't complain this dependency is missing
-  externals: ['pino-pretty'],
+  externals: [nodeExternals(), 'pino-pretty'],
 };

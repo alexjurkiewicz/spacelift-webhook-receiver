@@ -1,11 +1,12 @@
 // import { Context } from "aws-lambda/handler"
 import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from "aws-lambda/trigger/api-gateway-proxy"
+import { RuleTester } from "eslint";
 import fetch from "node-fetch"
 import pino from "pino";
 
 import { isNotificationRule, NotificationRule } from "./notification";
 import { eventIsInteresting, eventIsInterestingToRule, parseLabel } from "./rule";
-import { generateSlackMessage, sendSlackMessage } from "./slack";
+import { generateSlackMessage, sendSlackMessage, startSlackApp } from "./slack";
 import { SpaceliftWebhookPayload } from "./spacelift"
 import { verifySpaceliftEvent } from './verify'
 
@@ -18,14 +19,9 @@ export const logger = pino();
  * @returns
  */
 export async function lambdaEntry(raw_event: APIGatewayProxyEventV2): Promise<APIGatewayProxyStructuredResultV2> {
-  const spaceliftSecret = process.env.SPACELIFT_SECRET_TOKEN
-  if (spaceliftSecret === undefined) {
-    return lambdaError('Internal Error', {msg: "Couldn't load Spacelift secret token"})
-  }
-  // Validate for later
-  if (process.env.SLACK_WEBHOOK_URL === undefined) {
-    return lambdaError('Internal Error', {msg: "Couldn't load Slack webhook URL"})
-  }
+  const spaceliftSecret = validateEnvVar('SPACELIFT_SECRET_TOKEN')
+  validateEnvVar('SLACK_BOT_TOKEN')
+  validateEnvVar('SLACK_SIGNING_SECRET')
 
   const event = verifySpaceliftEvent(raw_event, spaceliftSecret)
   if (typeof event === 'string') {
@@ -58,7 +54,6 @@ async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
     logger.info("Event is not interesting")
     return
   }
-  const message = generateSlackMessage(event)
 
   // Iterate over every `slack:` label and parse it
   const labelRules = event.stack.labels.filter((label) => {
@@ -66,12 +61,27 @@ async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
   }).map(parseLabel).filter(isNotificationRule)
   logger.info(`Found ${labelRules.length} rules`)
 
+  if (labelRules.length === 0) {
+    return
+  }
+
+  // Send the message to every label's destination
+  const slackApp = await startSlackApp()
+  const message = generateSlackMessage(event)
   for (const rule of labelRules) {
     if (eventIsInterestingToRule(event, rule)) {
       logger.info({ msg: 'Rule was interested', rule })
-      await sendSlackMessage(message, rule.target)
+      await sendSlackMessage(slackApp, message, rule.target)
     } else {
       logger.info({ msg: 'Rule was NOT interested', rule })
     }
   }
+}
+
+function validateEnvVar(name: string): string {
+  const value = process.env[name]
+  if (value === undefined || value === '') {
+    throw new Error(`Missing environment variable ${name}`)
+  }
+  return value
 }
