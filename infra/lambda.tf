@@ -1,9 +1,3 @@
-locals {
-  lambda_s3_bucket  = local.use_local_function_source ? aws_s3_bucket_object.lambda[0].bucket : var.function_s3_source.bucket
-  lambda_s3_key     = local.use_local_function_source ? aws_s3_bucket_object.lambda[0].key : var.function_s3_source.key
-  lambda_s3_version = local.use_local_function_source ? aws_s3_bucket_object.lambda[0].version_id : null
-}
-
 resource "aws_lambda_function" "this" {
   function_name = var.name
   role          = aws_iam_role.lambda.arn
@@ -11,14 +5,14 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       SPACELIFT_SECRET_TOKEN = var.SPACELIFT_SECRET_TOKEN
+      SLACK_WEBHOOK_URL      = var.SLACK_WEBHOOK_URL
     }
   }
-  handler           = "handler.handler"
-  runtime           = "nodejs14.x"
-  s3_bucket         = local.lambda_s3_bucket
-  s3_key            = local.lambda_s3_key
-  s3_object_version = local.lambda_s3_version
-  timeout           = 30
+  handler          = "handler.mylib.lambdaEntry"
+  runtime          = "nodejs14.x"
+  filename         = var.function_source
+  source_code_hash = filebase64sha256(var.function_source)
+  timeout          = 30
 
   depends_on = [
     aws_cloudwatch_log_group.lambda,

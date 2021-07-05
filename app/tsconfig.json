@@ -2,8 +2,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "lib": ["es2020"],
-    "module": "commonjs",
+    "module": "ES2020",
+    "moduleResolution": "node",
     "target": "es2020",
+    // ???
+    "noEmit": false,
+    "importHelpers": false,
 
     "strict": true,
     "esModuleInterop": true,

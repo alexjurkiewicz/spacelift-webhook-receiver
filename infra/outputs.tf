@@ -1,5 +1,5 @@
 output "apigateway_id" {
-  value = module.apigateway.apigatewayv2_api_id
+  value       = module.apigateway.apigatewayv2_api_id
   description = "API Gateway ID"
 }
 output "apigateway_domain_name_target_domain_name" {

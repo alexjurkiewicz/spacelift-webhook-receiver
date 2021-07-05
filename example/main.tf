@@ -10,21 +10,14 @@ module "receiver" {
   domain_certificate_arn = module.certificate.arn
   log_group_retention    = 1
   SPACELIFT_SECRET_TOKEN = var.SPACELIFT_SECRET_TOKEN
-  function_source_type   = "local"
-  function_local_source  = "../src/dist/dist.zip"
+  SLACK_WEBHOOK_URL      = var.SLACK_WEBHOOK_URL
+  function_source        = "../src/dist/dist.zip"
 
   depends_on = [
+    # Need to wait for the whole module to create, which includes waiting for
+    # the certificate to get validated.
     module.certificate,
-    data.external.build_app
   ]
-}
-
-data "external" "build_app" {
-  program = ["bash", "-c", "set -eu && cat >/dev/null && cd ${module.path}/../src && npm ci && npm run-script build && echo {}"]
-
-  query = {
-    timestamp = timestamp() # Force data source to only run during apply
-  }
 }
 
 module "certificate" {

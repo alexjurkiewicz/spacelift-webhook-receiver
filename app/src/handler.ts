@@ -7,14 +7,14 @@ import { SpaceliftWebhookPayload } from "./spacelift"
 import { verifySpaceliftEvent } from './verify'
 
 // Once-off setup
-export const logger = pino();
+const logger = pino();
 
 /**
  * Lambda handler.
  * @param raw_event
  * @returns
  */
-export async function handler(raw_event: APIGatewayProxyEventV2): Promise<APIGatewayProxyStructuredResultV2> {
+export async function lambdaEntry(raw_event: APIGatewayProxyEventV2): Promise<APIGatewayProxyStructuredResultV2> {
   const spaceliftSecret = process.env.SPACELIFT_SECRET_TOKEN
   if (spaceliftSecret === undefined) {
     return lambdaError('Internal Error', {msg: "Couldn't load Spacelift secret token"})
@@ -31,7 +31,7 @@ export async function handler(raw_event: APIGatewayProxyEventV2): Promise<APIGat
 
   logger.info({ msg: "Spacelift event", event })
 
-  processEvent(event)
+  await processEvent(event)
 
   return { statusCode: 200 }
 }
@@ -58,6 +58,17 @@ function parseLabel(label: string): NotificationRule | undefined {
   }
 }
 
+function spaceliftStateToStatus(state: string): string {
+  switch (state) {
+    case 'UNCONFIRMED': {
+      return 'is awaiting approval'
+    }
+    default: {
+      return `has ${state.toLowerCase()}`
+    }
+  }
+}
+
 function isNotificationRule(rule: NotificationRule | undefined): rule is NotificationRule {
   return !!rule
 }
@@ -68,7 +79,7 @@ function isNotificationRule(rule: NotificationRule | undefined): rule is Notific
  * @param logData Object to log (should at least include msg)
  * @returns
  */
-export function lambdaError(clientMessage: string, logData: Record<string, unknown>): APIGatewayProxyStructuredResultV2 {
+function lambdaError(clientMessage: string, logData: Record<string, unknown>): APIGatewayProxyStructuredResultV2 {
   if (logData) {
     logger.info({ ...logData, clientMessage })
   }
@@ -88,7 +99,7 @@ function eventIsInteresting(event: SpaceliftWebhookPayload): boolean {
   return true;
 }
 
-function processEvent(event: SpaceliftWebhookPayload): void {
+async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
   if (!eventIsInteresting(event)) {
     logger.info("Event is not interesting")
     return
@@ -101,20 +112,20 @@ function processEvent(event: SpaceliftWebhookPayload): void {
   }).map(parseLabel).filter(isNotificationRule)
   logger.info(`Found ${labelRules.length} rules`)
 
-  labelRules.forEach(rule => {
+  for (const rule of labelRules) {
     if (eventIsInterestingToRule(event, rule)) {
       logger.info({ msg: 'Rule was interested', rule })
-      sendSlackMessage(message, rule.target)
+      await sendSlackMessage(message, rule.target)
     } else {
       logger.info({ msg: 'Rule was NOT interested', rule })
     }
-  })
+  }
 
 }
 function generateSlackMessage(event: SpaceliftWebhookPayload): string {
   const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`
   const sha = event.run.commit.hash.slice(0, 7)
-  return `<${runUrl}|Stack ${event.stack.id} is ${event.state.toLowerCase()}>. Run triggered by ${event.run.triggeredBy} @ <${event.run.commit.url}|${sha}>`
+  return `:spacelift: Stack <${runUrl}|${event.stack.id}> ${spaceliftStateToStatus(event.state)}. Run triggered by ${event.run.triggeredBy} @ <${event.run.commit.url}|${sha}>`
 }
 
 /**
@@ -125,11 +136,11 @@ function generateSlackMessage(event: SpaceliftWebhookPayload): string {
  * @returns
  */
 function eventIsInterestingToRule(event: SpaceliftWebhookPayload, rule: NotificationRule): boolean {
-  return rule.states.indexOf(event.state.toLowerCase()) !== -1
+  return rule.states.indexOf(event.state) !== -1
 }
 
-function sendSlackMessage(message: string, target: string): void {
-  fetch(process.env.SLACK_WEBHOOK_URL as string, {
+async function sendSlackMessage(message: string, target: string): Promise<void> {
+  await fetch(process.env.SLACK_WEBHOOK_URL as string, {
     method: 'POST',
     body: JSON.stringify({
       channel: target,

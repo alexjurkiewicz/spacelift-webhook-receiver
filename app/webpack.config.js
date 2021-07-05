@@ -2,8 +2,8 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  target: 'node',
-  entry: './handler.ts',
+  target: 'node14',
+  entry: './src/handler.ts',
   module: {
     rules: [
       {
@@ -19,9 +19,14 @@ module.exports = {
   output: {
     filename: 'handler.js',
     path: path.resolve(__dirname, 'dist'),
+    // XXX: Why is this required?
+    library: {
+      name: 'mylib',
+      type: 'commonjs2',
+    }
   },
   optimization: {
-    // minimize: false,
+    minimize: false,
   },
   // Don't complain this dependency is missing
   externals: ['pino-pretty'],
