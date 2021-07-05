@@ -2118,7 +2118,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"pino","version":"6.11.3","description":"super fast, all natural json logger","main":"pino.js","browser":"./browser.js","files":["pino.js","bin.js","browser.js","pretty.js","usage.txt","test","docs","example.js","lib"],"scripts":{"docs":"docsify serve","browser-test":"airtap --local 8080 test/browser*test.js","lint":"eslint .","test":"npm run lint && tap --100 test/*test.js test/*/*test.js","test-ci":"npm run lint && tap test/*test.js test/*/*test.js --coverage-report=lcovonly","cov-ui":"tap --coverage-report=html test/*test.js test/*/*test.js","bench":"node benchmarks/utils/runbench all","bench-basic":"node benchmarks/utils/runbench basic","bench-object":"node benchmarks/utils/runbench object","bench-deep-object":"node benchmarks/utils/runbench deep-object","bench-multi-arg":"node benchmarks/utils/runbench multi-arg","bench-longs-tring":"node benchmarks/utils/runbench long-string","bench-child":"node benchmarks/utils/runbench child","bench-child-child":"node benchmarks/utils/runbench child-child","bench-child-creation":"node benchmarks/utils/runbench child-creation","bench-formatters":"node benchmarks/utils/runbench formatters","update-bench-doc":"node benchmarks/utils/generate-benchmark-doc > docs/benchmarks.md"},"bin":{"pino":"./bin.js"},"precommit":"test","repository":{"type":"git","url":"git+https://github.com/pinojs/pino.git"},"keywords":["fast","logger","stream","json"],"author":"Matteo Collina <hello@matteocollina.com>","contributors":["David Mark Clements <huperekchuno@googlemail.com>","James Sumners <james.sumners@gmail.com>","Thomas Watson Steen <w@tson.dk> (https://twitter.com/wa7son)"],"license":"MIT","bugs":{"url":"https://github.com/pinojs/pino/issues"},"homepage":"http://getpino.io","devDependencies":{"airtap":"4.0.3","benchmark":"^2.1.4","bole":"^4.0.0","bunyan":"^1.8.14","docsify-cli":"^4.4.1","eslint":"^7.17.0","eslint-config-standard":"^16.0.2","eslint-plugin-import":"^2.22.1","eslint-plugin-node":"^11.1.0","eslint-plugin-promise":"^4.2.1","execa":"^5.0.0","fastbench":"^1.0.1","flush-write-stream":"^2.0.0","import-fresh":"^3.2.1","log":"^6.0.0","loglevel":"^1.6.7","pino-pretty":"^4.1.0","pre-commit":"^1.2.2","proxyquire":"^2.1.3","pump":"^3.0.0","semver":"^7.0.0","split2":"^3.1.1","steed":"^1.1.3","strip-ansi":"^6.0.0","tap":"^15.0.1","tape":"^5.0.0","through2":"^4.0.0","winston":"^3.3.3"},"dependencies":{"fast-redact":"^3.0.0","fast-safe-stringify":"^2.0.7","flatstr":"^1.0.12","pino-std-serializers":"^3.1.0","quick-format-unescaped":"^4.0.3","sonic-boom":"^1.0.2"}}');
+module.exports = JSON.parse('{"_args":[["pino@6.11.3","/Users/alex.jurkiewicz/personal/spacelift-webhook-receiver/app"]],"_from":"pino@6.11.3","_id":"pino@6.11.3","_inBundle":false,"_integrity":"sha512-drPtqkkSf0ufx2gaea3TryFiBHdNIdXKf5LN0hTM82SXI4xVIve2wLwNg92e1MT6m3jASLu6VO7eGY6+mmGeyw==","_location":"/pino","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"pino@6.11.3","name":"pino","escapedName":"pino","rawSpec":"6.11.3","saveSpec":null,"fetchSpec":"6.11.3"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/pino/-/pino-6.11.3.tgz","_spec":"6.11.3","_where":"/Users/alex.jurkiewicz/personal/spacelift-webhook-receiver/app","author":{"name":"Matteo Collina","email":"hello@matteocollina.com"},"bin":{"pino":"bin.js"},"browser":"./browser.js","bugs":{"url":"https://github.com/pinojs/pino/issues"},"contributors":[{"name":"David Mark Clements","email":"huperekchuno@googlemail.com"},{"name":"James Sumners","email":"james.sumners@gmail.com"},{"name":"Thomas Watson Steen","email":"w@tson.dk","url":"https://twitter.com/wa7son"}],"dependencies":{"fast-redact":"^3.0.0","fast-safe-stringify":"^2.0.7","flatstr":"^1.0.12","pino-std-serializers":"^3.1.0","quick-format-unescaped":"^4.0.3","sonic-boom":"^1.0.2"},"description":"super fast, all natural json logger","devDependencies":{"airtap":"4.0.3","benchmark":"^2.1.4","bole":"^4.0.0","bunyan":"^1.8.14","docsify-cli":"^4.4.1","eslint":"^7.17.0","eslint-config-standard":"^16.0.2","eslint-plugin-import":"^2.22.1","eslint-plugin-node":"^11.1.0","eslint-plugin-promise":"^4.2.1","execa":"^5.0.0","fastbench":"^1.0.1","flush-write-stream":"^2.0.0","import-fresh":"^3.2.1","log":"^6.0.0","loglevel":"^1.6.7","pino-pretty":"^4.1.0","pre-commit":"^1.2.2","proxyquire":"^2.1.3","pump":"^3.0.0","semver":"^7.0.0","split2":"^3.1.1","steed":"^1.1.3","strip-ansi":"^6.0.0","tap":"^15.0.1","tape":"^5.0.0","through2":"^4.0.0","winston":"^3.3.3"},"files":["pino.js","bin.js","browser.js","pretty.js","usage.txt","test","docs","example.js","lib"],"homepage":"http://getpino.io","keywords":["fast","logger","stream","json"],"license":"MIT","main":"pino.js","name":"pino","precommit":"test","repository":{"type":"git","url":"git+https://github.com/pinojs/pino.git"},"scripts":{"bench":"node benchmarks/utils/runbench all","bench-basic":"node benchmarks/utils/runbench basic","bench-child":"node benchmarks/utils/runbench child","bench-child-child":"node benchmarks/utils/runbench child-child","bench-child-creation":"node benchmarks/utils/runbench child-creation","bench-deep-object":"node benchmarks/utils/runbench deep-object","bench-formatters":"node benchmarks/utils/runbench formatters","bench-longs-tring":"node benchmarks/utils/runbench long-string","bench-multi-arg":"node benchmarks/utils/runbench multi-arg","bench-object":"node benchmarks/utils/runbench object","browser-test":"airtap --local 8080 test/browser*test.js","cov-ui":"tap --coverage-report=html test/*test.js test/*/*test.js","docs":"docsify serve","lint":"eslint .","test":"npm run lint && tap --100 test/*test.js test/*/*test.js","test-ci":"npm run lint && tap test/*test.js test/*/*test.js --coverage-report=lcovonly","update-bench-doc":"node benchmarks/utils/generate-benchmark-doc > docs/benchmarks.md"},"version":"6.11.3"}');
 
 /***/ }),
 
@@ -2993,8 +2993,67 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "lambdaEntry": () => (/* binding */ lambdaEntry)
+  "lambdaEntry": () => (/* binding */ lambdaEntry),
+  "logger": () => (/* binding */ logger)
 });
+
+// EXTERNAL MODULE: ./node_modules/pino/pino.js
+var pino = __webpack_require__(639);
+var pino_default = /*#__PURE__*/__webpack_require__.n(pino);
+;// CONCATENATED MODULE: ./src/notification.ts
+function spaceliftStateToStatus(state) {
+    switch (state) {
+        case 'UNCONFIRMED': {
+            return 'is awaiting approval';
+        }
+        default: {
+            return `has ${state.toLowerCase()}`;
+        }
+    }
+}
+function isNotificationRule(rule) {
+    return !!rule;
+}
+
+;// CONCATENATED MODULE: ./src/rule.ts
+/**
+ * Is this event interesting to a specific rule. Check the rule cares about the
+ * state (eg INITIALIZING, FINISHED).
+ * @param event
+ * @param rule
+ * @returns
+ */
+function eventIsInterestingToRule(event, rule) {
+    return rule.states.indexOf(event.state) !== -1;
+}
+/**
+ * Parse a string label. It should match `slack:TARGET`, where TARGET is a
+ * channel or user.
+ * @param label Label to parse
+ * @returns Parsed label, or undefined if the label is invalid.
+ */
+function parseLabel(label) {
+    const target = label.slice(6);
+    if (!label.startsWith('slack:') || target === '') {
+        return undefined;
+    }
+    return {
+        states: ["FINISHED", "FAILED", "UNCONFIRMED"],
+        target,
+    };
+}
+/**
+ * Is this event potentially interesting? We don't care about events from
+ * proposed runs.
+ * @param event
+ * @returns
+ */
+function eventIsInteresting(event) {
+    if (event.run.type !== 'TRACKED') {
+        return false;
+    }
+    return true;
+}
 
 ;// CONCATENATED MODULE: external "stream"
 const external_stream_namespaceObject = require("stream");
@@ -4646,12 +4705,33 @@ fetch.Promise = global.Promise;
 /* harmony default export */ const lib = (fetch);
 
 
-// EXTERNAL MODULE: ./node_modules/pino/pino.js
-var pino = __webpack_require__(639);
-var pino_default = /*#__PURE__*/__webpack_require__.n(pino);
+;// CONCATENATED MODULE: ./src/slack.ts
+// import { App } from '@slack/bolt'
+
+
+
+function generateSlackMessage(event) {
+    const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`;
+    const sha = event.run.commit.hash.slice(0, 7);
+    return `:spacelift: Stack <${runUrl}|${event.stack.id}> ${spaceliftStateToStatus(event.state)}. Run triggered by ${event.run.triggeredBy} @ <${event.run.commit.url}|${sha}>`;
+}
+async function sendSlackMessage(message, target) {
+    await lib(process.env.SLACK_WEBHOOK_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            channel: target,
+            text: message,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+    })
+        .then(response => {
+        logger.info({ msg: 'Slack webhook response', response });
+    });
+}
+
 ;// CONCATENATED MODULE: external "crypto"
 const external_crypto_namespaceObject = require("crypto");
-;// CONCATENATED MODULE: ./verify.ts
+;// CONCATENATED MODULE: ./src/verify.ts
 
 const SPACELIFT_SIGNATURE_HEADER = 'x-signature-256';
 /**
@@ -4681,7 +4761,9 @@ const verifySpaceliftEvent = (event, token) => {
     return JSON.parse(body);
 };
 
-;// CONCATENATED MODULE: ./handler.ts
+;// CONCATENATED MODULE: ./src/handler.ts
+
+
 
 
 
@@ -4710,25 +4792,6 @@ async function lambdaEntry(raw_event) {
     return { statusCode: 200 };
 }
 /**
- * Parse a string label. It should match `slack:TARGET`, where TARGET is a
- * channel or user.
- * @param label Label to parse
- * @returns Parsed label, or undefined if the label is invalid.
- */
-function parseLabel(label) {
-    const target = label.slice(6);
-    if (!label.startsWith('slack:') || target === '') {
-        return undefined;
-    }
-    return {
-        states: ["FINISHED", "FAILED", "UNCONFIRMED"],
-        target,
-    };
-}
-function isNotificationRule(rule) {
-    return !!rule;
-}
-/**
  * Convenience function to generate an error response.
  * @param clientMessage Message to client
  * @param logData Object to log (should at least include msg)
@@ -4739,18 +4802,6 @@ function lambdaError(clientMessage, logData) {
         logger.info({ ...logData, clientMessage });
     }
     return { statusCode: 500, body: JSON.stringify({ message: clientMessage }) };
-}
-/**
- * Is this event potentially interesting? We don't care about events from
- * proposed runs.
- * @param event
- * @returns
- */
-function eventIsInteresting(event) {
-    if (event.run.type !== 'TRACKED') {
-        return false;
-    }
-    return true;
 }
 async function processEvent(event) {
     if (!eventIsInteresting(event)) {
@@ -4772,34 +4823,6 @@ async function processEvent(event) {
             logger.info({ msg: 'Rule was NOT interested', rule });
         }
     }
-}
-function generateSlackMessage(event) {
-    const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`;
-    const sha = event.run.commit.hash.slice(0, 7);
-    return `<${runUrl}|Stack ${event.stack.id} is ${event.state.toLowerCase()}>. Run triggered by ${event.run.triggeredBy} @ <${event.run.commit.url}|${sha}>`;
-}
-/**
- * Is this event interesting to a specific rule. Check the rule cares about the
- * state (eg INITIALIZING, FINISHED).
- * @param event
- * @param rule
- * @returns
- */
-function eventIsInterestingToRule(event, rule) {
-    return rule.states.indexOf(event.state) !== -1;
-}
-async function sendSlackMessage(message, target) {
-    await lib(process.env.SLACK_WEBHOOK_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            channel: target,
-            text: message,
-        }),
-        headers: { 'Content-Type': 'application/json' },
-    })
-        .then(response => {
-        logger.info({ msg: 'Slack webhook response', response });
-    });
 }
 
 })();

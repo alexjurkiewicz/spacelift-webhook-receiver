@@ -3,11 +3,14 @@ import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from "aws-l
 import fetch from "node-fetch"
 import pino from "pino";
 
+import { isNotificationRule, NotificationRule } from "./notification";
+import { eventIsInteresting, eventIsInterestingToRule, parseLabel } from "./rule";
+import { generateSlackMessage, sendSlackMessage } from "./slack";
 import { SpaceliftWebhookPayload } from "./spacelift"
 import { verifySpaceliftEvent } from './verify'
 
 // Once-off setup
-const logger = pino();
+export const logger = pino();
 
 /**
  * Lambda handler.
@@ -36,43 +39,6 @@ export async function lambdaEntry(raw_event: APIGatewayProxyEventV2): Promise<AP
   return { statusCode: 200 }
 }
 
-interface NotificationRule {
-  states: string[]
-  target: string
-}
-
-/**
- * Parse a string label. It should match `slack:TARGET`, where TARGET is a
- * channel or user.
- * @param label Label to parse
- * @returns Parsed label, or undefined if the label is invalid.
- */
-function parseLabel(label: string): NotificationRule | undefined {
-  const target = label.slice(6)
-  if (!label.startsWith('slack:') || target === '') {
-    return undefined
-  }
-  return {
-    states: ["FINISHED", "FAILED", "UNCONFIRMED"],
-    target,
-  }
-}
-
-function spaceliftStateToStatus(state: string): string {
-  switch (state) {
-    case 'UNCONFIRMED': {
-      return 'is awaiting approval'
-    }
-    default: {
-      return `has ${state.toLowerCase()}`
-    }
-  }
-}
-
-function isNotificationRule(rule: NotificationRule | undefined): rule is NotificationRule {
-  return !!rule
-}
-
 /**
  * Convenience function to generate an error response.
  * @param clientMessage Message to client
@@ -86,18 +52,6 @@ function lambdaError(clientMessage: string, logData: Record<string, unknown>): A
   return { statusCode: 500, body: JSON.stringify({ message: clientMessage }) }
 }
 
-/**
- * Is this event potentially interesting? We don't care about events from
- * proposed runs.
- * @param event
- * @returns
- */
-function eventIsInteresting(event: SpaceliftWebhookPayload): boolean {
-  if (event.run.type !== 'TRACKED') {
-    return false
-  }
-  return true;
-}
 
 async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
   if (!eventIsInteresting(event)) {
@@ -120,35 +74,4 @@ async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
       logger.info({ msg: 'Rule was NOT interested', rule })
     }
   }
-
-}
-function generateSlackMessage(event: SpaceliftWebhookPayload): string {
-  const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`
-  const sha = event.run.commit.hash.slice(0, 7)
-  return `:spacelift: Stack <${runUrl}|${event.stack.id}> ${spaceliftStateToStatus(event.state)}. Run triggered by ${event.run.triggeredBy} @ <${event.run.commit.url}|${sha}>`
-}
-
-/**
- * Is this event interesting to a specific rule. Check the rule cares about the
- * state (eg INITIALIZING, FINISHED).
- * @param event
- * @param rule
- * @returns
- */
-function eventIsInterestingToRule(event: SpaceliftWebhookPayload, rule: NotificationRule): boolean {
-  return rule.states.indexOf(event.state) !== -1
-}
-
-async function sendSlackMessage(message: string, target: string): Promise<void> {
-  await fetch(process.env.SLACK_WEBHOOK_URL as string, {
-    method: 'POST',
-    body: JSON.stringify({
-      channel: target,
-      text: message,
-    }),
-    headers: { 'Content-Type': 'application/json' },
-  })
-    .then(response => {
-      logger.info({ msg: 'Slack webhook response', response })
-    })
 }

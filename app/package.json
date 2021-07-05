@@ -26,6 +26,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
+    "@slack/bolt": "^3.4.0",
     "node-fetch": "^2.6.1",
     "pino": "^6.11.3"
   }
