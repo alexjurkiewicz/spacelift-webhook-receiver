@@ -1,4 +1,4 @@
-import { App, Block, SectionBlock } from '@slack/bolt'
+import { App, Block, MrkdwnElement, SectionBlock } from '@slack/bolt'
 import { logger } from './handler'
 
 import { spaceliftStateToStatus } from './notification'
@@ -47,6 +47,17 @@ export function generateSlackMessage(event: SpaceliftWebhookPayload): SlackMessa
         text: `*Code:* <${event.run.commit.url}|${repo} @ ${sha}>`
       }
     ]
+  }
+  if (event.run.delta) {
+    const entries = []
+    if (event.run.delta.added > 0) entries.push(`${event.run.delta.added} :new:`)
+    if (event.run.delta.changed > 0) entries.push(`${event.run.delta.changed} :arrows_counterclockwise:`)
+    if (event.run.delta.deleted > 0) entries.push(`${event.run.delta.deleted} :bin_your_rubbish:`,)
+    const changes: MrkdwnElement = {
+      type: "mrkdwn",
+      text: `*Changes:* ${entries.join(', ')}`,
+    }; // required semicolon due to ( on next line
+    (messageBlock.fields as MrkdwnElement[]).push(changes)
   }
   return {
     text,
