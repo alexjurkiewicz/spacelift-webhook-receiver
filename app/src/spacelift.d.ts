@@ -1,6 +1,6 @@
 export interface SpaceliftWebhookPayload {
   account: string
-  state: "FINISHED" | "QUEUED" | "PREPARING" | "INITIALIZING" | string
+  state: "FINISHED" | "QUEUED" | "PREPARING" | "INITIALIZING" | "DISCARDED" | "CONFIRMED" | string
   stateVersion: number
   timestamp: number
   run: {

@@ -5,10 +5,11 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       SPACELIFT_SECRET_TOKEN = var.SPACELIFT_SECRET_TOKEN
-      SLACK_WEBHOOK_URL      = var.SLACK_WEBHOOK_URL
+      SLACK_BOT_TOKEN = var.SLACK_BOT_TOKEN
+      SLACK_SIGNING_SECRET = var.SLACK_SIGNING_SECRET
     }
   }
-  handler          = "handler.mylib.lambdaEntry"
+  handler          = "handler.lambdaEntry"
   runtime          = "nodejs14.x"
   filename         = var.function_source
   source_code_hash = filebase64sha256(var.function_source)

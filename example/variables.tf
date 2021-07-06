@@ -12,7 +12,12 @@ variable "SPACELIFT_SECRET_TOKEN" {
   sensitive = true
 }
 
-variable "SLACK_WEBHOOK_URL" {
+variable "SLACK_BOT_TOKEN" {
+  type      = string
+  sensitive = true
+}
+
+variable "SLACK_SIGNING_SECRET" {
   type      = string
   sensitive = true
 }

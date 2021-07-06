@@ -10,8 +10,9 @@ module "receiver" {
   domain_certificate_arn = module.certificate.arn
   log_group_retention    = 1
   SPACELIFT_SECRET_TOKEN = var.SPACELIFT_SECRET_TOKEN
-  SLACK_WEBHOOK_URL      = var.SLACK_WEBHOOK_URL
-  function_source        = "../src/dist/dist.zip"
+  SLACK_BOT_TOKEN = var.SLACK_BOT_TOKEN
+  SLACK_SIGNING_SECRET = var.SLACK_SIGNING_SECRET
+  function_source        = "${path.module}/../app/dist/dist.zip"
 
   depends_on = [
     # Need to wait for the whole module to create, which includes waiting for

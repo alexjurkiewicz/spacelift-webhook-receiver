@@ -6,10 +6,23 @@ export interface NotificationRule {
 export function spaceliftStateToStatus(state: string): string {
   switch (state) {
     case 'UNCONFIRMED': {
-      return 'is awaiting approval'
+      return 'Awaiting approval 📝'
+    }
+    case 'DISCARDED': {
+      return 'Discarded 🙈'
+    }
+    case 'CONFIRMED': {
+      return 'Approved 🚢'
+    }
+    case 'FINISHED': {
+      return 'Finished ✅'
+    }
+    case 'FAILED': {
+      return 'Failed ❌'
     }
     default: {
-      return `has ${state.toLowerCase()}`
+      // Title case
+      return `${state[0].toUpperCase()}${state.slice(1).toLowerCase()}`
     }
   }
 }

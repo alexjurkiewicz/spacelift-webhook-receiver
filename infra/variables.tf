@@ -25,10 +25,14 @@ variable "SPACELIFT_SECRET_TOKEN" {
   description = "Secret token used to validate webhook payloads."
 }
 
-variable "SLACK_WEBHOOK_URL" {
-  type        = string
-  sensitive   = true
-  description = "Secret webhook URL used to send Slack messages."
+variable "SLACK_BOT_TOKEN" {
+  type      = string
+  sensitive = true
+}
+
+variable "SLACK_SIGNING_SECRET" {
+  type      = string
+  sensitive = true
 }
 
 variable "function_source" {

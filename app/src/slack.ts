@@ -1,4 +1,4 @@
-import { App } from '@slack/bolt'
+import { App, Block, SectionBlock } from '@slack/bolt'
 import { logger } from './handler'
 
 import { spaceliftStateToStatus } from './notification'
@@ -15,16 +15,49 @@ export async function startSlackApp(): Promise<App> {
   return app
 }
 
-export function generateSlackMessage(event: SpaceliftWebhookPayload): string {
-  const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`
-  const sha = event.run.commit.hash.slice(0, 7)
-  return `:spacelift: Stack <${runUrl}|${event.stack.id}> ${spaceliftStateToStatus(event.state)}. Run triggered by ${event.run.triggeredBy} @ <${event.run.commit.url}|${sha}>`
+export interface SlackMessagePayload {
+  text: string
+  blocks: Block[],
 }
 
-export async function sendSlackMessage(app: App, message: string, target: string): Promise<void> {
+export function generateSlackMessage(event: SpaceliftWebhookPayload): SlackMessagePayload {
+  const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`
+  const triggeredBy = event.run.triggeredBy ?? "Git push"
+  const sha = event.run.commit.hash.slice(0, 7)
+  const repo = event.run.commit.url.split('/')[4] // Really hacky, but works for Github
+  const status = spaceliftStateToStatus(event.state)
+  const text = `${event.stack.id} is ${status}`
+  const messageBlock: SectionBlock = {
+    type: "section",
+    fields: [
+      {
+        type: "mrkdwn",
+        text: `*Stack:* <${runUrl}|${event.stack.id}>`
+      },
+      {
+        type: "mrkdwn",
+        text: `*State:* ${status}`
+      },
+      {
+        type: "mrkdwn",
+        text: `*Triggered by:* ${triggeredBy}`
+      },
+      {
+        type: "mrkdwn",
+        text: `*Code:* <${event.run.commit.url}|${repo} @ ${sha}>`
+      }
+    ]
+  }
+  return {
+    text,
+    blocks: [messageBlock]
+  }
+}
+
+export async function sendSlackMessage(app: App, message: SlackMessagePayload, target: string): Promise<void> {
   const opts = {
+    ...message,
     channel: target,
-    message,
   }
   await app.client.chat.postMessage(opts).then(response => {
     logger.info({ msg: 'Slack postMessage response', response })

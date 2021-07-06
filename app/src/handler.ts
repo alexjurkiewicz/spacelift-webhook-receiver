@@ -1,7 +1,5 @@
 // import { Context } from "aws-lambda/handler"
 import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from "aws-lambda/trigger/api-gateway-proxy"
-import { RuleTester } from "eslint";
-import fetch from "node-fetch"
 import pino from "pino";
 
 import { isNotificationRule, NotificationRule } from "./notification";
@@ -67,11 +65,11 @@ async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
 
   // Send the message to every label's destination
   const slackApp = await startSlackApp()
-  const message = generateSlackMessage(event)
+  const slackMessage = generateSlackMessage(event)
   for (const rule of labelRules) {
     if (eventIsInterestingToRule(event, rule)) {
       logger.info({ msg: 'Rule was interested', rule })
-      await sendSlackMessage(slackApp, message, rule.target)
+      await sendSlackMessage(slackApp, slackMessage, rule.target)
     } else {
       logger.info({ msg: 'Rule was NOT interested', rule })
     }
