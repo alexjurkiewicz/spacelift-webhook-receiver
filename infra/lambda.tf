@@ -4,9 +4,10 @@ resource "aws_lambda_function" "this" {
   description   = "Handler for Spacelift webhook events"
   environment {
     variables = {
+      DYNAMODB_TABLE         = module.dynamodb.table_name
       SPACELIFT_SECRET_TOKEN = var.SPACELIFT_SECRET_TOKEN
-      SLACK_BOT_TOKEN = var.SLACK_BOT_TOKEN
-      SLACK_SIGNING_SECRET = var.SLACK_SIGNING_SECRET
+      SLACK_BOT_TOKEN        = var.SLACK_BOT_TOKEN
+      SLACK_SIGNING_SECRET   = var.SLACK_SIGNING_SECRET
     }
   }
   handler          = "handler.lambdaEntry"
@@ -29,6 +30,10 @@ resource "aws_iam_role" "lambda" {
   name                = var.name
   assume_role_policy  = data.aws_iam_policy_document.lambda_trust.json
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+  inline_policy {
+    name   = "DynamoDB"
+    policy = data.aws_iam_policy_document.lambda_dynamodb_access.json
+  }
 }
 
 data "aws_iam_policy_document" "lambda_trust" {
@@ -38,5 +43,19 @@ data "aws_iam_policy_document" "lambda_trust" {
       type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
+  }
+}
+
+data "aws_iam_policy_document" "lambda_dynamodb_access" {
+  statement {
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:BatchGetItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:BatchWriteItem",
+    ]
+    resources = [module.dynamodb.table_arn]
   }
 }
