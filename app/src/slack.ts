@@ -53,6 +53,7 @@ export function generateSlackMessage(event: SpaceliftWebhookPayload): SlackMessa
     if (event.run.delta.added > 0) entries.push(`${event.run.delta.added} :new:`)
     if (event.run.delta.changed > 0) entries.push(`${event.run.delta.changed} :arrows_counterclockwise:`)
     if (event.run.delta.deleted > 0) entries.push(`${event.run.delta.deleted} :bin_your_rubbish:`,)
+    if (entries.length === 0) entries.push("No changes")
     const changes: MrkdwnElement = {
       type: "mrkdwn",
       text: `*Changes:* ${entries.join(', ')}`,
