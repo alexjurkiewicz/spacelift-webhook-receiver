@@ -23,7 +23,7 @@ export async function lambdaEntry(raw_event: APIGatewayProxyEventV2): Promise<AP
 
   const event = verifySpaceliftEvent(raw_event, spaceliftSecret)
   if (typeof event === 'string') {
-    return lambdaError("Couldn't verify payload", {msg: 'Parsing Spacelift event failed', error: event})
+    return lambdaError("Couldn't verify payload", { msg: 'Parsing Spacelift event failed', error: event })
   }
 
   logger.info({ msg: "Spacelift event", event })
@@ -69,7 +69,9 @@ async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
   for (const rule of labelRules) {
     if (eventIsInterestingToRule(event, rule)) {
       logger.info({ msg: 'Rule was interested', rule })
-      await sendSlackMessage(slackApp, slackMessage, rule.target)
+      await sendSlackMessage(slackApp, slackMessage, rule.target).catch((err) => {
+        logger.error({ msg: `Couldn't send Slack message to ${rule.target}`, err })
+      })
     } else {
       logger.info({ msg: 'Rule was NOT interested', rule })
     }

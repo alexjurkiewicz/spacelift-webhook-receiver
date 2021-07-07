@@ -1,4 +1,5 @@
 import { App, Block, MrkdwnElement, SectionBlock } from '@slack/bolt'
+import { UsersListResponse } from '@slack/web-api';
 import { logger } from './handler'
 
 import { spaceliftStateToStatus } from './notification'
@@ -66,10 +67,39 @@ export function generateSlackMessage(event: SpaceliftWebhookPayload): SlackMessa
   }
 }
 
+async function resolveSlackTarget(app: App, target: string): Promise<string> {
+  // # is a friendly channel name
+  // U is a user ID
+  // C is a channel ID
+  if (target[0] === '#' || target[0] === 'U' || target[0] === 'C') {
+    return target
+  }
+  logger.debug({ msg: "Resolving Slack target", target })
+  // We have a username, let's resolve it to a user ID
+  for await (const page of app.client.paginate('users.list')) {
+    const user = extractUserFromUserListPage(page, target)
+    if (user !== undefined) return user
+  }
+  throw new Error(`can't find Slack target ${target}`)
+}
+
+function extractUserFromUserListPage(page: UsersListResponse, target: string): string | undefined {
+  if (page.members === undefined) {
+    return undefined
+  }
+  for (const member of page.members) {
+    if (member.profile?.display_name === target) {
+      logger.debug({ msg: "Found matching member", member })
+      return member.id
+    }
+  }
+}
+
 export async function sendSlackMessage(app: App, message: SlackMessagePayload, target: string): Promise<void> {
+  const channel = await resolveSlackTarget(app, target)
   const opts = {
     ...message,
-    channel: target,
+    channel,
   }
   await app.client.chat.postMessage(opts).then(response => {
     logger.info({ msg: 'Slack postMessage response', response })
