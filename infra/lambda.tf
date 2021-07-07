@@ -4,7 +4,7 @@ resource "aws_lambda_function" "this" {
   description   = "Handler for Spacelift webhook events"
   environment {
     variables = {
-      DYNAMODB_TABLE         = module.dynamodb.table_name
+      # DYNAMODB_TABLE         = module.dynamodb.table_name # Disabled for now
       SPACELIFT_SECRET_TOKEN = var.SPACELIFT_SECRET_TOKEN
       SLACK_BOT_TOKEN        = var.SLACK_BOT_TOKEN
       SLACK_SIGNING_SECRET   = var.SLACK_SIGNING_SECRET
