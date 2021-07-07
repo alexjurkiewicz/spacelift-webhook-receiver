@@ -24,7 +24,8 @@ export function parseLabel(label: string): NotificationRule | undefined {
     return undefined
   }
   return {
-    states: ["FINISHED", "FAILED", "UNCONFIRMED"],
+    // Other potentially interesting states: "FINISHED", CONFIRMED, DISCARDED
+    states: ["FAILED", "UNCONFIRMED"],
     target,
   }
 }
