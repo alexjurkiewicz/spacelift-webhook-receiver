@@ -10,7 +10,7 @@ This repository has three components:
 
 ### Application
 
-Located in `src/`. An AWS Lambda function to receive a Spacelift webhook and verify the signature. You can build it with:
+Located in `app/`. An AWS Lambda function to receive a Spacelift webhook and verify the signature. You can build it with:
 
 ```bash
 npm install
