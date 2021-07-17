@@ -1,12 +1,6 @@
-variable "name" {
-  type        = string
-  description = "Name of this deployment"
-  default     = "spacelift-webhook-receiver"
-}
-
 variable "hosted_zone_name" {
   type        = string
-  description = "Name of the hosted zone to create the record in"
+  description = "The hosted zone name matching var.domain_name"
 }
 
 variable "SPACELIFT_SECRET_TOKEN" {
@@ -27,7 +21,12 @@ variable "SLACK_SIGNING_SECRET" {
   description = "Slack signing secret used to validate Slack webhooks."
 }
 
-variable "function_source" {
+variable "aws_profile" {
   type        = string
-  description = "Function source path."
+  description = "AWS profile to use."
+}
+
+variable "aws_region" {
+  type        = string
+  description = "AWS region to use."
 }
