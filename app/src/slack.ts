@@ -20,7 +20,6 @@ export interface SlackMessagePayload {
 }
 
 export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayload {
-  const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`
   const triggeredBy = event.run.triggeredBy ?? "Git push"
   const repo = event.run.commit.url.split('/')[4] // Really hacky, but works for Github
   const status = spaceliftStateToStatus(event.state)
@@ -30,7 +29,7 @@ export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayl
     fields: [
       {
         type: "mrkdwn",
-        text: `*Stack:* <${runUrl}|${event.stack.id}>`
+        text: `*Stack:* <${event.run.url}|${event.stack.id}>`
       },
       {
         type: "mrkdwn",

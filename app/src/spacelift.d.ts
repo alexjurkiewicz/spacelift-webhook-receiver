@@ -37,6 +37,7 @@ export interface SpaceliftRunEvent {
     }
     triggeredBy: string
     type: "TRACKED" | "PROPOSED"
+    url: string
   }
   stack: {
     id: string
