@@ -1,37 +1,55 @@
 # Spacelift Webhook Receiver
 
-This is an example NodeJS application for receiving Spacelift webhook notifications and doing something with them.
+*Spacelift Webhook Receiver* is a service for recieving Spacelift webhook/audit events and notifying channels/users in Slack.
 
-You can fork this repository and extend the code as required.
+Subscriptions are set up per-stack using `slack:#channel` labels (more details below).
 
-## Usage
+SWR runs in AWS Lambda and is written in Typescript.
 
-This repository has three components:
+## Label Syntax
 
-### Application
+Label examples:
 
-Located in `app/`. An AWS Lambda function to receive a Spacelift webhook and verify the signature. You can build it with:
+* `slack:#infra`
+* `slack:#infra:finished,failure,unconfirmed`
+* `slack:user.name:planning`
+
+Labels are colon `:` delimited.
+
+1. The first section must be `slack`.
+2. The second section is the Slack target. You can specify a channel, username, channel ID (C12345678), or user ID (U12345678).
+3. The third section is optional. You can specify the run states that will generate notifications. By default, it is `unconfirmed,failure` (runs waiting for confirmation or failed).
+
+## Installation
+
+At the moment, deploying this service is quite manual. The high-level process is:
+
+1. Create a Slack app and install it to your workspace
+2. Build code
+3. Deploy service
+
+### Create a Slack app and install it to your workspace
+
+1. Visit https://api.slack.com/apps and create a new app
+2. On "Oauth & Permissions", add the following permissions:
+  2. `chat:write.public` (message public channels)
+  1. `chat:write` (message private channels the bot is invited to)
+  3. `im:write` (DM users)
+  4. `users:read` (send messages to user.names)
+3. Install the app to your workspace
+4. On "Oauth & Permissions", copy the "Bot User OAuth Token" for later
+5. On "Basic Information", copy the "Signing Secret" for later
+
+### Build code
 
 ```bash
-npm install
-npm run-scripts build
+cd app
+npm ci
+npm run-script build
 ```
 
-### Infrastructure
+You'll end up with `dist/dist.zip` which contains the Lambda handler.
 
-Located in `infra/`. A Terraform module to deploy:
+### Deploy service
 
-* S3 Bucket to stage function code (if using a local file source)
-* The above Lambda function
-  * IAM Role
-  * CloudWatch Log Group
-* API Gateway with a custom domain
-  * A route for `POST /` to the Lambda
-  * CloudWatch Log Group
-
-### Example
-
-Located in `example/`. Example usage of the infrastructure component. This adds site-specific opinionated DNS configuration:
-
-* Generate a new ACM certificate
-* Add the custom domain record to Route 53
+There is a Terraform module in `infra/` which can deploy the minimal required AWS resources. See the example usage in `infra/example/`.
