@@ -1,5 +1,5 @@
 import { NotificationRule } from "./notification"
-import { SpaceliftWebhookPayload } from "./spacelift"
+import { SpaceliftRunEvent } from "./spacelift"
 
 /**
  * Is this event interesting to a specific rule. Check the rule cares about the
@@ -8,36 +8,30 @@ import { SpaceliftWebhookPayload } from "./spacelift"
  * @param rule
  * @returns
  */
-export function eventIsInterestingToRule(event: SpaceliftWebhookPayload, rule: NotificationRule): boolean {
-  return rule.states.indexOf(event.state) !== -1
+export function runEventIsInterestingToRule(event: SpaceliftRunEvent, rule: NotificationRule): boolean {
+  return rule.states.indexOf(event.state.toLowerCase()) !== -1
 }
 
 /**
- * Parse a string label. It should match `slack:TARGET`, where TARGET is a
- * channel or user.
+ * Check a label string, if it's a slack target specifier, parse it and return
+ * the rule. Otherwise, return nothing.
+ *
+ * The expected rule format is `slack:TARGET[:state[,state[...]]]`
+ *    TARGET is a channel or user. You can use friendly name (eg #channel,
+ *      user.name) or the Slack ID (C12345678, U12345678).
+ *   STATE is a Spacelift stack state in lower-case. For instance: initializing,
+ *      finished, failed, etc. You can specify multiple states by separating
+ *      them with commas. If you don't specify any states, the default is
+ *      "unconfirmed, failed".
+ *
  * @param label Label to parse
- * @returns Parsed label, or undefined if the label is invalid.
+ * @returns Array containing the parsed rule or nothing
  */
-export function parseLabel(label: string): NotificationRule | undefined {
-  const target = label.slice(6)
-  if (!label.startsWith('slack:') || target === '') {
-    return undefined
+export function parseSlackLabel(label: string): [NotificationRule] | [] {
+  const [prefix, target, states_str] = label.split(':') as [string | undefined, string | undefined, string | undefined]
+  if (prefix !== 'slack' || !target) {
+    return []
   }
-  return {
-    // Other potentially interesting states: "FINISHED", CONFIRMED, DISCARDED
-    states: ["FAILED", "UNCONFIRMED"],
-    target,
-  }
-}
-/**
- * Is this event potentially interesting? We don't care about events from
- * proposed runs.
- * @param event
- * @returns
- */
-export function eventIsInteresting(event: SpaceliftWebhookPayload): boolean {
-  if (event.run.type !== 'TRACKED') {
-    return false
-  }
-  return true;
+  const states = states_str ? states_str.split(',').map(s => s.toLowerCase()) : ['failed', 'unconfirmed']
+  return [{ states, target }]
 }

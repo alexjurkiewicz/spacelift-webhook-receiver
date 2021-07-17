@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda/trigger/api-gateway-proxy"
 import { createHmac, timingSafeEqual } from "crypto"
-import { SpaceliftWebhookPayload } from "./spacelift"
+import { SpaceliftAuditTrailEvent } from "./spacelift"
 
 const SPACELIFT_SIGNATURE_HEADER = 'x-signature-256'
 
@@ -13,7 +13,7 @@ const SPACELIFT_SIGNATURE_HEADER = 'x-signature-256'
  * @param event Raw AWS Lambda event
  * @returns Either a parsed event or a string error message.
  */
- export const verifySpaceliftEvent = (event: APIGatewayProxyEventV2, token: string): SpaceliftWebhookPayload | string => {
+ export const verifySpaceliftEvent = (event: APIGatewayProxyEventV2, token: string): SpaceliftAuditTrailEvent | string => {
   const claimedSignature = event.headers[SPACELIFT_SIGNATURE_HEADER]
   if (claimedSignature === undefined) {
     return "Missing payload signature"

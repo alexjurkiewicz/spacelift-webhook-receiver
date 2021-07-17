@@ -1,4 +1,7 @@
 export interface NotificationRule {
+  /**
+   * List of lowercase stack states that will trigger the notification.
+   */
   states: string[]
   target: string
 }

@@ -3,9 +3,7 @@ import { UsersListResponse } from '@slack/web-api';
 import { logger } from './handler'
 
 import { spaceliftStateToStatus } from './notification'
-import { SpaceliftWebhookPayload } from "./spacelift"
-
-
+import { SpaceliftRunEvent } from './spacelift';
 
 export async function startSlackApp(): Promise<App> {
   const app = new App({
@@ -21,7 +19,7 @@ export interface SlackMessagePayload {
   blocks: Block[],
 }
 
-export function generateSlackMessage(event: SpaceliftWebhookPayload): SlackMessagePayload {
+export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayload {
   const runUrl = `https://${event.account}.app.spacelift.io/stack/${event.stack.id}/run/${event.run.id}`
   const triggeredBy = event.run.triggeredBy ?? "Git push"
   const repo = event.run.commit.url.split('/')[4] // Really hacky, but works for Github
@@ -73,21 +71,20 @@ async function resolveSlackTarget(app: App, target: string): Promise<string> {
   if (target[0] === '#' || target[0] === 'U' || target[0] === 'C') {
     return target
   }
-  logger.debug({ msg: "Resolving Slack target", target })
-  // We have a username, let's resolve it to a user ID
+  logger.debug({ msg: "Resolving Slack username", target })
   for await (const page of app.client.paginate('users.list')) {
-    const user = extractUserFromUserListPage(page, target)
-    if (user !== undefined) return user
+    const user = extractUserIdFromUserListPage(page, target)
+    if (user) return user
   }
   throw new Error(`can't find Slack target ${target}`)
 }
 
-function extractUserFromUserListPage(page: UsersListResponse, target: string): string | undefined {
+function extractUserIdFromUserListPage(page: UsersListResponse, displayName: string): string | undefined {
   if (page.members === undefined) {
     return undefined
   }
   for (const member of page.members) {
-    if (member.profile?.display_name === target) {
+    if (member.profile?.display_name === displayName) {
       logger.debug({ msg: "Found matching member", member })
       return member.id
     }

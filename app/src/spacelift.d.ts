@@ -1,5 +1,18 @@
-export interface SpaceliftWebhookPayload {
+export type SpaceliftAuditTrailEvent = SpaceliftAuditEvent | SpaceliftRunEvent
+
+export interface SpaceliftAuditEvent {
   account: string
+  action: string
+  state: undefined // This property only exists on run events
+  actor: string
+  context: Record<string, unknown>
+  data: Record<string, unknown>
+  timestamp: number
+}
+
+export interface SpaceliftRunEvent {
+  account: string
+  action: undefined // This property only exists on audit events
   state: "FINISHED" | "QUEUED" | "PREPARING" | "INITIALIZING" | "DISCARDED" | "CONFIRMED" | string
   stateVersion: number
   timestamp: number

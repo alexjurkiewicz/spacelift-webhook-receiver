@@ -2,10 +2,9 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from "aws-lambda/trigger/api-gateway-proxy"
 import pino from "pino";
 
-import { isNotificationRule, NotificationRule } from "./notification";
-import { eventIsInteresting, eventIsInterestingToRule, parseLabel } from "./rule";
+import { runEventIsInterestingToRule, parseSlackLabel } from "./rule";
 import { generateSlackMessage, sendSlackMessage, startSlackApp } from "./slack";
-import { SpaceliftWebhookPayload } from "./spacelift"
+import { SpaceliftRunEvent } from "./spacelift"
 import { verifySpaceliftEvent } from './verify'
 
 // Once-off setup
@@ -26,54 +25,67 @@ export async function lambdaEntry(raw_event: APIGatewayProxyEventV2): Promise<AP
     return lambdaError("Couldn't verify payload", { msg: 'Parsing Spacelift event failed', error: event })
   }
 
-  logger.info({ msg: "Spacelift event", event })
+  // We don't care about audit events
+  if (event.state === undefined) {
+    return lambdaOk()
+  }
 
-  await processEvent(event)
+  const interesting = eventIsInteresting(event)
+  logger.info({ msg: "Spacelift event", event, interesting })
 
-  return { statusCode: 200 }
+  if (!interesting) {
+    return lambdaOk()
+  }
+
+  await sendSlackMessages(event);
+
+  return lambdaOk()
+}
+
+/**
+ * Is this event potentially interesting?
+ * @param event
+ * @returns
+ */
+ export function eventIsInteresting(event: SpaceliftRunEvent): boolean {
+  // We only care about tracked (real) runs, not proposed (pull request) runs
+  return event.run.type === 'TRACKED'
 }
 
 /**
  * Convenience function to generate an error response.
  * @param clientMessage Message to client
- * @param logData Object to log (should at least include msg)
+ * @param logData Object to log
  * @returns
  */
-function lambdaError(clientMessage: string, logData: Record<string, unknown>): APIGatewayProxyStructuredResultV2 {
+function lambdaError(clientMessage: string, logData: {msg: string, [key: string]: unknown}): APIGatewayProxyStructuredResultV2 {
   if (logData) {
     logger.info({ ...logData, clientMessage })
   }
   return { statusCode: 500, body: JSON.stringify({ message: clientMessage }) }
 }
 
+function lambdaOk(): APIGatewayProxyStructuredResultV2 {
+  return { statusCode: 200 }
+}
 
-async function processEvent(event: SpaceliftWebhookPayload): Promise<void> {
-  if (!eventIsInteresting(event)) {
-    logger.info("Event is not interesting")
+async function sendSlackMessages(event: SpaceliftRunEvent) {
+  const slackRules = event.stack.labels.flatMap(parseSlackLabel)
+  logger.info(`Found ${slackRules.length} Slack rules`)
+
+  if (slackRules.length === 0) {
     return
   }
-
-  // Iterate over every `slack:` label and parse it
-  const labelRules = event.stack.labels.filter((label) => {
-    return label.startsWith('slack:')
-  }).map(parseLabel).filter(isNotificationRule)
-  logger.info(`Found ${labelRules.length} rules`)
-
-  if (labelRules.length === 0) {
-    return
-  }
-
-  // Send the message to every label's destination
-  const slackApp = await startSlackApp()
-  const slackMessage = generateSlackMessage(event)
-  for (const rule of labelRules) {
-    if (eventIsInterestingToRule(event, rule)) {
-      logger.info({ msg: 'Rule was interested', rule })
+  const slackApp = await startSlackApp();
+  const slackMessage = generateSlackMessage(event);
+  for (const rule of slackRules) {
+    if (runEventIsInterestingToRule(event, rule)) {
+      logger.info({ msg: 'Rule was interested', rule });
       await sendSlackMessage(slackApp, slackMessage, rule.target).catch((err) => {
-        logger.error({ msg: `Couldn't send Slack message to ${rule.target}`, err })
-      })
+        logger.error({ msg: `Couldn't send Slack message to ${rule.target}`, err });
+      });
     } else {
-      logger.info({ msg: 'Rule was NOT interested', rule })
+      logger.info({ msg: 'Rule was NOT interested', rule });
     }
   }
 }
