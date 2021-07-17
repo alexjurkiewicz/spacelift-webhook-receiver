@@ -53,3 +53,10 @@ You'll end up with `dist/dist.zip` which contains the Lambda handler.
 ### Deploy service
 
 There is a Terraform module in `infra/` which can deploy the minimal required AWS resources. See the example usage in `infra/example/`.
+
+Once the service is deployed, you need to add a webhook in Spacelift. There are two ways to do this:
+
+1. Per-stack webhook integration.
+2. Global audit webhook. Make sure to enable "Include runs".
+
+There's no difference in functionality between these approaches. Which to use depends on your preference whether the receiver is available by default for all stacks, or installed on a per-stack basis.
