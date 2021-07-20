@@ -23,10 +23,17 @@ variable "SLACK_SIGNING_SECRET" {
 
 variable "aws_profile" {
   type        = string
+  default     = "default"
   description = "AWS profile to use."
 }
 
 variable "aws_region" {
   type        = string
   description = "AWS region to use."
+}
+
+variable "upload_source" {
+  type        = bool
+  default     = true
+  description = "If true, upload local app dist.zip to the bucket. If not true, you'll have to take care of this yourself."
 }

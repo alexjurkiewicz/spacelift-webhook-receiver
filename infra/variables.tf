@@ -27,7 +27,14 @@ variable "SLACK_SIGNING_SECRET" {
   description = "Slack signing secret used to validate Slack webhooks."
 }
 
-variable "function_source" {
+variable "s3_bucket" {
   type        = string
-  description = "Function source path."
+  default     = ""
+  description = "S3 Bucket for Lambda Function."
+}
+
+variable "s3_key" {
+  type        = string
+  default     = ""
+  description = "S3 Key for Lambda Function."
 }

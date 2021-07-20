@@ -12,8 +12,8 @@ resource "aws_lambda_function" "this" {
   }
   handler          = "handler.lambdaEntry"
   runtime          = "nodejs14.x"
-  filename         = var.function_source
-  source_code_hash = filebase64sha256(var.function_source)
+  s3_bucket        = var.s3_bucket
+  s3_key           = var.s3_key
   timeout          = 30
 
   depends_on = [
