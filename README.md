@@ -32,10 +32,10 @@ At the moment, deploying this service is quite manual. The high-level process is
 
 1. Visit https://api.slack.com/apps and create a new app
 2. On "Oauth & Permissions", add the following permissions:
-  2. `chat:write.public` (message public channels)
-  1. `chat:write` (message private channels the bot is invited to)
-  3. `im:write` (DM users)
-  4. `users:read` (send messages to user.names)
+    1. `chat:write.public` (message public channels)
+    2. `chat:write` (message private channels the bot is invited to)
+    3. `im:write` (DM users)
+    4. `users:read` (send messages to user.names)
 3. Install the app to your workspace
 4. On "Oauth & Permissions", copy the "Bot User OAuth Token" for later
 5. On "Basic Information", copy the "Signing Secret" for later
