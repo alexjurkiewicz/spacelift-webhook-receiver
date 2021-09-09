@@ -2,6 +2,8 @@
 
 *Spacelift Webhook Receiver* is a service for recieving Spacelift webhook/audit events and notifying channels/users in Slack.
 
+![Sample of Slack messages](docs/sample.png)
+
 Subscriptions are set up per-stack using `slack:#channel` labels (more details below).
 
 SWR runs in AWS Lambda and is written in Typescript.
