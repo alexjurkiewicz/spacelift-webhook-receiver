@@ -1,6 +1,6 @@
 module "apigateway" {
   source  = "terraform-aws-modules/apigateway-v2/aws"
-  version = "~> 1.1.0"
+  version = "~> 1.5.1"
 
   name                         = var.name
   description                  = "Spacelift webhook handler"

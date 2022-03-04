@@ -10,11 +10,11 @@ resource "aws_lambda_function" "this" {
       SLACK_SIGNING_SECRET   = var.SLACK_SIGNING_SECRET
     }
   }
-  handler          = "handler.lambdaEntry"
-  runtime          = "nodejs14.x"
-  s3_bucket        = var.s3_bucket
-  s3_key           = var.s3_key
-  timeout          = 30
+  handler   = "handler.lambdaEntry"
+  runtime   = "nodejs14.x"
+  s3_bucket = var.s3_bucket
+  s3_key    = var.s3_key
+  timeout   = 30
 
   depends_on = [
     aws_cloudwatch_log_group.lambda,
