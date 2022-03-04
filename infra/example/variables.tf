@@ -21,12 +21,6 @@ variable "SLACK_SIGNING_SECRET" {
   description = "Slack signing secret used to validate Slack webhooks."
 }
 
-variable "aws_profile" {
-  type        = string
-  default     = "default"
-  description = "AWS profile to use."
-}
-
 variable "aws_region" {
   type        = string
   description = "AWS region to use."
