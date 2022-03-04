@@ -20,16 +20,20 @@ export interface SlackMessagePayload {
 }
 
 export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayload {
-  const triggeredBy = event.run.triggeredBy ?? "Git push"
   const repo = event.run.commit.url.split('/')[4] // Really hacky, but works for Github
   const status = spaceliftStateToStatus(event.state)
   const text = `${event.stack.id} is ${status}`
+  const stackUrl = event.run.url.split('/',5).join('/') // Also really hacky, hopefully event.stack.url is added
   const messageBlock: SectionBlock = {
     type: "section",
+    text: {
+      type: "mrkdwn",
+      text: ":spacelift: Spacelift tracked run update"
+    },
     fields: [
       {
         type: "mrkdwn",
-        text: `*Stack:* <${event.run.url}|${event.stack.id}>`
+        text: `*Stack:* <${stackUrl}|${event.stack.id}>`
       },
       {
         type: "mrkdwn",
@@ -37,11 +41,11 @@ export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayl
       },
       {
         type: "mrkdwn",
-        text: `*Triggered by:* ${triggeredBy}`
+        text: `*Run:* <${event.run.url}|${event.run.id}>`
       },
       {
         type: "mrkdwn",
-        text: `*Code:* <${event.run.commit.url}|${repo} @ ${event.run.commit.message}>`
+        text: `*Code:* <${event.run.commit.url}|${event.run.commit.message}>`
       }
     ]
   }
@@ -50,7 +54,7 @@ export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayl
     if (event.run.delta.added > 0) entries.push(`${event.run.delta.added} :new:`)
     if (event.run.delta.changed > 0) entries.push(`${event.run.delta.changed} :arrows_counterclockwise:`)
     if (event.run.delta.deleted > 0) entries.push(`${event.run.delta.deleted} :put_litter_in_its_place:`,)
-    if (entries.length === 0) entries.push("No changes")
+    if (entries.length === 0) entries.push("None")
     const changes: MrkdwnElement = {
       type: "mrkdwn",
       text: `*Changes:* ${entries.join(', ')}`,
