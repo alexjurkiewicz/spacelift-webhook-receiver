@@ -1,6 +1,9 @@
 import { NotificationRule } from "./notification"
 import { SpaceliftRunEvent } from "./spacelift"
 
+/** Default stack states to notify about. */
+const DEFAULT_STATES = ['failed']
+
 /**
  * Is this event interesting to a specific rule. Check the rule cares about the
  * state (eg INITIALIZING, FINISHED).
@@ -21,8 +24,7 @@ export function runEventIsInterestingToRule(event: SpaceliftRunEvent, rule: Noti
  *      user.name) or the Slack ID (C12345678, U12345678).
  *   STATE is a Spacelift stack state in lower-case. For instance: initializing,
  *      finished, failed, etc. You can specify multiple states by separating
- *      them with commas. If you don't specify any states, the default is
- *      "unconfirmed, failed".
+ *      them with commas. If you don't specify any states, the default is used.
  *
  * @param label Label to parse
  * @returns Array containing the parsed rule or nothing
@@ -32,6 +34,6 @@ export function parseSlackLabel(label: string): [NotificationRule] | [] {
   if (prefix !== 'slack' || !target) {
     return []
   }
-  const states = states_str ? states_str.split(',').map(s => s.toLowerCase()) : ['failed', 'unconfirmed']
+  const states = states_str ? states_str.split(',').map(s => s.toLowerCase()) : DEFAULT_STATES
   return [{ states, target }]
 }
