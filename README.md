@@ -19,8 +19,12 @@ Label examples:
 Labels are colon `:` delimited.
 
 1. The first section must be `slack`.
-2. The second section is the Slack target. You can specify a channel, username, channel ID (C12345678), or user ID (U12345678).
-3. The third section is optional. You can specify the run states that will generate notifications. By default, it is `unconfirmed,failure` (runs waiting for confirmation or failed).
+2. The second section is the Slack target. You can specify a channel (`#foo`), username (`user.name`), channel ID (`C12345XYZ`), or user ID (`U12345XYZ`). (If you want to specify multiple targets, add one label for each.)
+3. The third section is optional. You can specify the run states that will generate notifications. By default, it is `failure`. Comma-separate multiple states.
+
+### Spacelift States
+
+There's no authoritative list of states in Spacelift's docs. The closest you'll find is [the page on run states](https://docs.spacelift.io/concepts/run). Here's an incomplete list for your convenience: `queued`, `preparing`, `initializing`, `planning`, `unconfirmed`, `confirmed`, `applying`, `finished`, `failure`, `destroying`, `performing`.
 
 ## Installation
 
