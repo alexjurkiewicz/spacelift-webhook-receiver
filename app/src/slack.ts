@@ -41,7 +41,7 @@ export function generateSlackMessage(event: SpaceliftRunEvent): SlackMessagePayl
       },
       {
         type: "mrkdwn",
-        text: `*Run:* <${event.run.url}|${event.run.id}>`
+        text: `*Run:* <${event.run.url}|${event.run.id.slice(0, 10)}>`
       },
       {
         type: "mrkdwn",
